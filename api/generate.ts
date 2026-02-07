@@ -1,26 +1,35 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+  // Allow only POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const { prompt } = req.body;
 
-    if (!prompt) {
-      return res.status(400).json({ error: "Prompt is required" });
+    if (!prompt || typeof prompt !== 'string') {
+      return res.status(400).json({
+        error: 'Prompt is required and must be a string'
+      });
     }
 
-    // TEMP response (no AI yet)
+    // Temporary response (LLM will be plugged later)
+    const reply = `Gentle reflection: ${prompt}`;
+
     return res.status(200).json({
-      insight: "You showed up today. That itself matters. Be gentle with yourself."
+      success: true,
+      reply
     });
 
   } catch (error) {
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error'
+    });
   }
 }
